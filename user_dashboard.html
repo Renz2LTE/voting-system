@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Informatics Northgate</title>
+    
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <div class="dashboard-wrapper">
+        
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="brand-section">
+                <img src="1998832.webp" alt="Logo" class="sidebar-logo">
+                <h2>Informatics College</h2>
+            </div>
+
+            <div class="sidebar-user">
+                <div class="user-avatar-circle">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <h4 id="sideName">Loading...</h4>
+                <p class="side-role">Student</p>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" id="nav-dashboard">
+                        <i class="fa-solid fa-border-all"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                
+                <!-- PUBLIC ORGS TAB (Visible to All) -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link" id="nav-all-orgs">
+                        <i class="fa-solid fa-sitemap"></i>
+                        <span>Organizations</span>
+                    </a>
+                </li>
+
+                <!-- FILING TAB (Hidden by default) -->
+                <li class="nav-item hidden" id="nav-item-application">
+                    <a href="#" class="nav-link" id="nav-application">
+                        <i class="fa-solid fa-file-signature"></i>
+                        <span>Filing of Candidacy</span>
+                    </a>
+                </li>
+
+                <!-- MY ORG TAB (Hidden by default, Members only) -->
+                <li class="nav-item hidden" id="nav-item-org">
+                    <a href="#" class="nav-link" id="nav-org">
+                        <i class="fa-solid fa-users-rays"></i>
+                        <span>My Organization</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link" id="nav-vote">
+                        <i class="fa-solid fa-check-to-slot"></i>
+                        <span>Vote</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" id="nav-guidelines">
+                        <i class="fa-solid fa-book"></i>
+                        <span>Voters Guideline</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <h2 id="pageTitle">Dashboard</h2>
+                    <p id="currentDateDisplay" class="text-muted">...</p>
+                </div>
+
+                <div class="header-right" style="display: flex; align-items: center; gap: 20px;">
+                    
+                    <!-- NOTIFICATION BELL -->
+                    <div style="position: relative;">
+                        <button id="notificationBtn" style="background: none; border: none; font-size: 20px; color: #666; cursor: pointer; padding: 5px;">
+                            <i class="fa-solid fa-bell"></i>
+                            <span id="notificationBadge" class="hidden" style="position: absolute; top: 0; right: 0; width: 10px; height: 10px; background: red; border-radius: 50%; border: 2px solid white; font-size: 0;"></span>
+                        </button>
+
+                        <div id="notificationDropdown" class="hidden" style="position: absolute; top: 40px; right: -10px; width: 300px; background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); overflow: hidden; z-index: 1000; border: 1px solid #eee;">
+                            <div style="padding: 15px; border-bottom: 1px solid #eee; font-weight: 700; color: var(--dark-blue); background: #fafafa;">Notifications</div>
+                            <ul id="notificationList" style="list-style: none; padding: 0; max-height: 300px; overflow-y: auto;">
+                                <li style="padding: 15px; text-align: center; color: #888;">Loading...</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- User Dropdown -->
+                    <div class="user-dropdown-container" id="userDropdownTrigger">
+                        <div class="user-pill">
+                            <img src="https://img.freepik.com/free-icon/user_318-159711.jpg" alt="User" id="topAvatar">
+                            <span id="topName">Student</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+
+                        <div class="dropdown-menu hidden" id="dropdownMenu">
+                            <a href="admin.html" id="menu-admin" class="hidden" style="color: var(--dark-blue); font-weight: 700;">
+                                <i class="fa-solid fa-shield-halved"></i> Admin Panel
+                            </a>
+                            <a href="#" id="menu-settings"><i class="fa-solid fa-user-gear"></i> Settings</a>
+                            <hr>
+                            <a href="#" id="menu-logout" class="danger-text"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- VIEW: DASHBOARD -->
+            <div id="view-dashboard" class="content-view">
+                <div class="welcome-banner">
+                    <div>
+                        <h1 id="welcomeMessage">Hello!</h1>
+                        <p>Welcome to Informatics Northgate Online Voting System.</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="card election-card">
+                        <div class="election-info">
+                            <span class="badge-live">● Live Now</span>
+                            <h2>Student Council Election 2023</h2>
+                            <p>Cast your vote for the future leaders.</p>
+                            <button class="btn-vote-now" id="btnGoToVote">Vote Now</button>
+                        </div>
+                        <div class="election-icon">
+                            <i class="fa-solid fa-box-open"></i>
+                        </div>
+                    </div>
+
+                    <div class="card calendar-card">
+                        <div class="card-header-small">
+                            <h3>Calendar</h3>
+                            <span id="calMonthYear">Month</span>
+                        </div>
+                        <div class="cal-days-header">
+                            <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+                        </div>
+                        <div class="cal-grid" id="calendarGrid"></div>
+                    </div>
+
+                    <div class="card results-card">
+                        <div class="card-header-flex">
+                            <h3>Live Results</h3>
+                            <button class="icon-btn" onclick="window.location.reload()"><i class="fa-solid fa-rotate"></i></button>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="resultsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card activities-card">
+                        <h3>Election Activities</h3>
+                        <ul class="timeline" id="userTimelineList">
+                            <li class="pending">
+                                <span class="dot"></span>
+                                <div class="timeline-content">
+                                    <span class="activity">Loading...</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: PUBLIC ORGANIZATIONS LIST (NEW) -->
+            <div id="view-all-orgs" class="content-view hidden">
+                <div class="section-title-box">
+                    <h2>Student Organizations</h2>
+                    <p>Meet the parties running for this year's election.</p>
+                </div>
+                <div class="dashboard-grid" id="publicOrgsGrid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px;">
+                    <!-- JS Populates Cards Here -->
+                    <p>Loading...</p>
+                </div>
+            </div>
+
+            <!-- VIEW: APPLICATION -->
+            <div id="view-application" class="content-view hidden">
+                <div class="section-title-box">
+                    <h2>Candidacy Application</h2>
+                    <p>Run for a position in the Student Council.</p>
+                </div>
+                <div class="card" style="max-width: 800px; margin: 0 auto;">
+                    <form id="candidacyForm">
+                        <div style="margin-bottom: 20px;">
+                            <label style="display:block; margin-bottom: 8px; font-weight: 600;">Position to Run For</label>
+                            <select id="apply_position" class="profile-input" required>
+                                <option value="" disabled selected>Select Position</option>
+                                <option value="President">President</option>
+                                <option value="Vice President">Vice President</option>
+                                <option value="Secretary">Secretary</option>
+                                <option value="Treasurer">Treasurer</option>
+                                <option value="Auditor">Auditor</option>
+                                <option value="P.R.O">P.R.O</option>
+                            </select>
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <label style="display:block; margin-bottom: 8px; font-weight: 600;">Political Party / Organization</label>
+                            <select id="apply_org" class="profile-input" required>
+                                <option value="" disabled selected>Select Organization</option>
+                                <option value="Independent">Independent</option>
+                            </select>
+                        </div>
+                        <div id="newOrgGroup" class="hidden" style="margin-bottom: 20px; padding: 20px; background: #f0f7ff; border-radius: 12px; border: 1px dashed var(--primary-blue);">
+                            <label style="color: var(--primary-blue); font-weight: 700; display:block; margin-bottom: 10px;">Create New Organization</label>
+                            <input type="text" id="new_org_name" placeholder="Enter Organization Name" class="profile-input">
+                            <p style="font-size: 12px; color: #666; margin-top: 5px; font-style: italic;">*Only Presidential candidates can create a new party.</p>
+                        </div>
+                        <div style="text-align: right; margin-top: 30px;">
+                            <button type="submit" class="btn-vote-now" style="border: none;">Submit Application</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- VIEW: MY ORGANIZATION (Members Only) -->
+            <div id="view-org" class="content-view hidden">
+                <div class="card full-width-card" style="background: linear-gradient(135deg, var(--dark-blue) 0%, var(--primary-blue) 100%); color: white; margin-bottom: 25px;">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <span class="badge-live" style="background: rgba(255,255,255,0.2);">My Party</span>
+                            <h1 id="orgNameDisplay" style="font-size: 32px; margin-top: 10px;">Loading...</h1>
+                            <p style="opacity: 0.8; font-size: 14px;">Official Party Page</p>
+                        </div>
+                        <button id="btnEditOrg" class="hidden" style="background: white; color: var(--primary-blue); border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                            <i class="fa-solid fa-pen"></i> Edit Info
+                        </button>
+                    </div>
+                </div>
+                <div class="dashboard-grid">
+                    <div class="card" style="grid-column: 1 / 2;">
+                        <h3 style="color: var(--dark-blue); margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">About Us</h3>
+                        <div style="margin-bottom: 20px;">
+                            <h4 style="font-size: 14px; color: #888; margin-bottom: 5px;">Mission</h4>
+                            <p id="orgMissionDisplay" style="font-size: 14px; line-height: 1.6;">No mission statement yet.</p>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 14px; color: #888; margin-bottom: 5px;">Vision</h4>
+                            <p id="orgVisionDisplay" style="font-size: 14px; line-height: 1.6;">No vision statement yet.</p>
+                        </div>
+                    </div>
+                    <div class="card" style="grid-column: 2 / 3;">
+                        <h3 style="color: var(--dark-blue); margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">Party Members</h3>
+                        <ul id="orgMembersList" style="list-style: none; padding: 0;">
+                            <li>Loading members...</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: VOTE -->
+            <div id="view-vote" class="content-view hidden">
+                <div class="section-title-box">
+                    <h2>Official Ballot</h2>
+                    <p>Select your preferred candidate for each position.</p>
+                </div>
+                <div id="voteStatusBanner" class="status-banner hidden">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <div>
+                        <strong>Vote Submitted!</strong>
+                        <p>Thank you for participating.</p>
+                    </div>
+                </div>
+                <div id="candidatesContainer">
+                    <div class="loading-spinner"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</div>
+                </div>
+                <div class="submit-section">
+                    <button id="finalSubmitBtn" class="btn-vote-now" style="background: var(--dark-blue); color: white; border: none;">SUBMIT VOTE</button>
+                </div>
+            </div>
+
+            <!-- VIEW: GUIDELINES -->
+            <div id="view-guidelines" class="content-view hidden">
+                <div class="card full-width-card">
+                    <div class="guidelines-header">
+                        <i class="fa-solid fa-book-open"></i>
+                        <h2>Voters Guidelines</h2>
+                    </div>
+                    <ul class="guidelines-list">
+                        <li><span class="num">1</span> Each student is entitled to <strong>one (1)</strong> ballot only.</li>
+                        <li><span class="num">2</span> Once submitted, votes are <strong>final</strong>.</li>
+                        <li><span class="num">3</span> Please review your choices carefully.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- VIEW: SETTINGS -->
+            <div id="view-settings" class="content-view hidden">
+                <div class="profile-header-card">
+                    <div class="profile-avatar-giant">
+                        <img src="https://img.freepik.com/free-icon/user_318-159711.jpg" alt="Profile">
+                    </div>
+                    <div class="profile-identity">
+                        <h1 id="profileNameDisplay">User Name</h1>
+                        <span class="badge-student">Informatics Student</span>
+                    </div>
+                </div>
+                <div class="card profile-form-card">
+                    <div class="form-title-bar">
+                        <h3>Personal Information</h3>
+                        <div class="form-actions">
+                            <button class="btn-edit" id="btnEditProfile"><i class="fa-solid fa-pen"></i> Edit</button>
+                            <button class="btn-save hidden" id="btnSaveProfile"><i class="fa-solid fa-check"></i> Save</button>
+                        </div>
+                    </div>
+                    <div class="profile-grid">
+                        <div class="p-group"><label>First Name</label><input type="text" id="p_firstname" class="profile-input" disabled></div>
+                        <div class="p-group"><label>Last Name</label><input type="text" id="p_lastname" class="profile-input" disabled></div>
+                        <div class="p-group"><label>Student ID</label><input type="text" id="p_studentid" class="profile-input" disabled></div>
+                        <div class="p-group"><label>Birthday</label><input type="date" id="p_birthday" class="profile-input" disabled></div>
+                        <div class="p-group"><label>Contact Number</label><input type="text" id="p_phone" class="profile-input" disabled></div>
+                        <div class="p-group"><label>Email</label><input type="email" id="p_email" class="profile-input" disabled></div>
+                        <div class="p-group full"><label>Strand / Course</label><input type="text" id="p_strand" class="profile-input" disabled></div>
+                        <div class="p-group full"><label>Address</label><input type="text" id="p_address" class="profile-input" disabled></div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MODAL: Edit Org (For President) -->
+    <div id="editOrgModal" class="modal-overlay hidden">
+        <div class="modal-container" style="height: auto; max-width: 600px; flex-direction: column; padding: 30px;">
+            <h2 style="color: var(--dark-blue); margin-bottom: 20px;">Edit Organization Details</h2>
+            <form id="editOrgForm">
+                <div class="input-group" style="margin-bottom: 15px;">
+                    <label style="font-size: 12px; color: #666;">Mission</label>
+                    <textarea id="edit_org_mission" rows="4" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;" required></textarea>
+                </div>
+                <div class="input-group" style="margin-bottom: 15px;">
+                    <label style="font-size: 12px; color: #666;">Vision</label>
+                    <textarea id="edit_org_vision" rows="4" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;" required></textarea>
+                </div>
+                <div style="text-align: right; margin-top: 10px; display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" id="closeOrgModal" class="btn-small-outline" style="color: #666; border-color: #ddd;">Cancel</button>
+                    <button type="submit" class="btn-vote-now" style="border: none;">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Public Org Details (For Everyone) -->
+    <div id="publicOrgModal" class="modal-overlay hidden">
+        <div class="modal-container" style="height: auto; max-height: 85vh; max-width: 600px; flex-direction: column; padding: 0; overflow: hidden;">
+            <div style="text-align: right; padding: 10px 20px; background: #fafafa; border-bottom: 1px solid #eee;">
+                <button id="closePublicOrgModal" style="background:none; border:none; font-size:28px; cursor:pointer;">&times;</button>
+            </div>
+            <div id="publicOrgModalContent" style="padding: 20px; overflow-y: auto;">
+                <!-- JS Populates This -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN SCRIPT -->
+    <script type="module" src="js/user_dashboard.js"></script>
+</body>
+</html>

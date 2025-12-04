@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informatics College - Voting System</title>
+    
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/index.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <header class="main-header">
+        <nav>
+            <div class="logo-container">
+                <img src="1998832.webp" alt="Informatics Logo" class="school-logo">
+                <span class="logo-text">Informatics College</span>
+            </div>
+            
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+
+            <div class="auth-buttons">
+                <button class="btn-login">Log in</button>
+                <button class="btn-register">Register</button>
+            </div>
+        </nav>
+    </header>
+
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title"><span>Informatics</span>Online Voting System</h1>
+            <p class="hero-subtitle">
+                The official, secure voting portal for Informatics Northgate College. 
+                Register with your student ID to participate in student council elections.
+            </p>
+            <button class="btn-hero">Register as a Voter</button>
+        </div>
+        <div class="hero-image">
+            <img src="https://img.freepik.com/free-vector/online-voting-concept-illustration_114360-6208.jpg" alt="Voting Illustration">
+        </div>
+    </section>
+
+    <section class="steps-bar">
+        <div class="step-item">
+            <span class="step-label">Step 1:</span>
+            <h3>SIGN UP</h3>
+            <p>Create your verified student account using your ID number.</p>
+            <button class="btn-small-outline">Register Now</button>
+        </div>
+        <div class="step-item">
+            <span class="step-label">Step 2:</span>
+            <h3>VOTE</h3>
+            <p>Select your preferred candidates securely from any device.</p>
+        </div>
+        <div class="step-item">
+            <span class="step-label">Step 3:</span>
+            <h3>VIEW RESULTS</h3>
+            <p>View real-time transparency reports and final election results.</p>
+        </div>
+    </section>
+
+    <section class="features-section">
+        <h2 class="section-title">System Features</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="icon-circle">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h3>Secured Platform</h3>
+                <p>Encrypted data ensures your vote remains anonymous and safe.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-circle">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                </div>
+                <h3>Vote Online</h3>
+                <p>Access the platform from your phone, tablet, or laptop.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-circle">
+                    <i class="fa-solid fa-users-viewfinder"></i>
+                </div>
+                <h3>Real Time Results</h3>
+                <p>Automated counting allows for immediate result publication.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-left">
+                <div class="logo-container footer-logo">
+                    <img src="1998832.webp" alt="Logo" class="school-logo-small">
+                    <span class="logo-text">Informatics College Inc.</span>
+                </div>
+                <p class="copyright">© Copyright 2023 Informatics College Inc.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-container">
+            <button class="close-modal-btn" id="closeModal">&times;</button>
+            
+            <div class="modal-left">
+                <div class="modal-welcome-text">
+                    <h2>Welcome Back!</h2>
+                    <p>Login to access your voting dashboard.</p>
+                </div>
+            </div>
+
+            <div class="modal-right">
+                
+                <div class="form-box login-box" id="loginFormBox">
+                    <h2>Sign In</h2>
+                    <div class="input-group">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" id="login_email" placeholder="Email Address" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="login_password" placeholder="Password" required>
+                    </div>
+                    
+                    <div id="signInMessage" class="message-div"></div>
+
+                    <button class="btn-submit" id="submitLogin">Log In</button>
+                    
+                    <p class="switch-text">
+                        Don't have an account? <a href="#" id="showRegister">Register here</a>
+                    </p>
+                </div>
+
+                <div class="form-box register-box hidden" id="registerFormBox">
+                    <h2>Create Account</h2>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <i class="fa-solid fa-user"></i>
+                            <input type="text" id="first_name" placeholder="First Name" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-solid fa-user"></i>
+                            <input type="text" id="last_name" placeholder="Last Name" required>
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <i class="fa-solid fa-id-card"></i>
+                            <input type="text" id="student_id" placeholder="Student ID" required>
+                        </div>
+                        <div class="input-group">
+                            <input type="date" id="birthday" required style="padding-left: 15px; color: #555;">
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            <select id="year_level" required>
+                                <option value="" disabled selected>Year Level</option>
+                                <option value="Grade 11">Grade 11</option>
+                                <option value="Grade 12">Grade 12</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-solid fa-book-open"></i>
+                            <select id="strand" required>
+                                <option value="" disabled selected>Strand</option>
+                                <option value="GAS">GAS (HUGAS)</option>
+                                <option value="HUMSS">HUMSS</option>
+                                <option value="ABM">ABM</option>
+                                <option value="ICT - ANIMATION">ICT - ANIMATION</option>
+                                <option value="ICT - PROGRAMMING">ICT - PROGRAMMING</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <input type="text" id="address" placeholder="City / Address" required>
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group phone-group">
+                            <span class="ph-prefix">+63</span>
+                            <input type="tel" id="phone_number" placeholder="912 345 6789" maxlength="10" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-solid fa-envelope"></i>
+                            <input type="email" id="signup_email" placeholder="Email" required>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="signup_password" placeholder="Password (Min. 6 chars)" required>
+                    </div>
+
+                    <div id="signUpMessage" class="message-div"></div>
+
+                    <button class="btn-submit" id="submitSignUp">Register</button>
+
+                    <p class="switch-text">
+                        Already have an account? <a href="#" id="showLogin">Log in here</a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/index.js"></script>
+
+</body>
+</html>
