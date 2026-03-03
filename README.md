@@ -110,15 +110,6 @@ Backend & Database: Firebase Authentication, Firestore (NoSQL), Firebase Cloud S
 
 Libraries: Chart.js (Data Visualization), FontAwesome (Icons)
 
-🚀 Getting Started
-
-To run this project locally:
-
-Clone the repository:
-
-git clone [https://github.com/yourusername/informatics-voting-system.git](https://github.com/yourusername/informatics-voting-system.git)
-
-
 Navigate to the project directory:
 
 cd informatics-voting-system
