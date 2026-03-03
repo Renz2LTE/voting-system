@@ -102,7 +102,6 @@ To maintain a modular and scalable codebase, the project follows a strict featur
         ├── admin_reset.js          
         └── admin_election.js       
 
-
 🛠️ Technology Stack
 
 Frontend: HTML5, CSS3, Vanilla JavaScript (ES6+ Modules)
