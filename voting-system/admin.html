@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Informatics College</title>
+    
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- NEW: Added Chart.js script so the Admin Live Results actually render! -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary-blue); }
+        input:checked + .slider:before { transform: translateX(24px); }
+        .badge-admin { background: #222; color: #fff; padding: 2px 10px; border-radius: 10px; font-size: 11px; margin-top: 5px; display: inline-block; }
+        .modal-container { display: flex; flex-direction: column; max-height: 90vh; }
+        .modal-container form { overflow-y: auto; padding-right: 5px; }
+        select.profile-input { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23005bb5%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 15px center; background-size: 12px; padding-right: 30px; }
+        .strand-checkbox-group { display: flex; gap: 10px; flex-wrap: wrap; background: #f9f9f9; padding: 10px; border-radius: 8px; border: 1px solid #ddd; }
+        .strand-checkbox-group label { font-size: 13px; color: #333; display: flex; align-items: center; gap: 5px; cursor: pointer; }
+
+        /* NEW: Mobile Responsiveness */
+        .hamburger-btn { display: none; background: none; border: none; font-size: 24px; color: var(--dark-blue); cursor: pointer; margin-right: 15px; }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1999; }
+        .sidebar-overlay.active { display: block; }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); position: fixed; z-index: 2000; height: 100vh; transition: transform 0.3s ease; }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0 !important; width: 100%; }
+            .hamburger-btn { display: block; }
+            .header-left { display: flex; align-items: center; }
+            .dashboard-grid { grid-template-columns: 1fr !important; }
+            .modal-container { width: 95%; max-height: 95vh; padding: 20px; }
+            #broadcastForm { flex-direction: column; } /* Stack broadcast inputs */
+        }
+    </style>
+</head>
+
+<body>
+    <!-- NEW: Mobile Sidebar Overlay -->
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <div class="brand-section"><img src="1998832.webp" alt="Logo" class="sidebar-logo"><h2>Admin Panel</h2></div>
+            <div class="sidebar-user"><div class="user-avatar-circle" style="background: #f0f0f0; color: #333;"><i class="fa-solid fa-user-shield"></i></div><h4 id="adminName">Loading...</h4><span class="badge-admin">ADMINISTRATOR</span></div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="#" class="nav-link active" id="nav-overview"><i class="fa-solid fa-chart-pie"></i><span>Overview</span></a></li>
+                <li class="nav-item"><a href="#" class="nav-link" id="nav-applications"><i class="fa-solid fa-file-import"></i><span>Applications</span><span id="appBadge" class="badge-count hidden" style="background:red; color:white; padding:2px 6px; border-radius:10px; font-size:10px; margin-left:10px;">0</span></a></li>
+                <li class="nav-item"><a href="#" class="nav-link" id="nav-users"><i class="fa-solid fa-users-gear"></i><span>Manage Users</span></a></li>
+                <li class="nav-item"><a href="#" class="nav-link" id="nav-orgs"><i class="fa-solid fa-sitemap"></i><span>Organizations</span></a></li>
+                <li class="nav-item"><a href="#" class="nav-link" id="nav-partylists"><i class="fa-solid fa-users-line"></i><span>Partylists</span></a></li>
+                <li class="nav-item"><a href="#" class="nav-link" id="nav-positions"><i class="fa-solid fa-list-ol"></i><span>Positions</span></a></li>
+                <li class="nav-item"><a href="#" class="nav-link" id="nav-reports"><i class="fa-solid fa-file-invoice"></i><span>Reports & Audit</span></a></li>
+                <li class="nav-item"><a href="#" class="nav-link" id="nav-settings"><i class="fa-solid fa-sliders"></i><span>Election Control</span></a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <!-- NEW: Hamburger Button -->
+                    <button id="hamburgerBtn" class="hamburger-btn"><i class="fa-solid fa-bars"></i></button>
+                    <div>
+                        <h2 id="pageTitle">Overview</h2>
+                        <p class="text-muted">Control Center</p>
+                    </div>
+                </div>
+                <div class="header-right" style="display: flex; gap: 10px;"><button id="adminLogout" class="btn-small-outline" style="color: #d32f2f; border-color: #d32f2f;"><i class="fa-solid fa-power-off"></i> Logout</button></div>
+            </header>
+
+            <div id="view-overview" class="content-view">
+                <div class="welcome-banner"><div><h1>Admin Dashboard</h1><p>Welcome back, Admin. Here is the current system status.</p></div></div>
+                <div class="dashboard-grid">
+                    <div class="card" style="grid-column: 1 / -1;"><h3 style="color: var(--dark-blue); margin-bottom: 15px;">📢 Broadcast Announcement</h3><form id="broadcastForm" style="display: flex; gap: 10px;"><input type="text" id="broadcastTitle" placeholder="Title" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px;" required><input type="text" id="broadcastMsg" placeholder="Message details..." style="flex: 2; padding: 10px; border: 1px solid #ddd; border-radius: 8px;" required><button type="submit" class="btn-vote-now" style="border:none; cursor:pointer; background: var(--dark-blue); color: white;">Send</button></form></div>
+                    <div class="card results-card" style="grid-column: 1 / -1;"><div class="card-header-flex"><h3>Live Election Results</h3></div><div class="chart-wrapper"><canvas id="adminResultsChart"></canvas></div></div>
+                </div>
+            </div>
+
+            <div id="view-applications" class="content-view hidden">
+                <div class="section-title-box"><h2>Manage Applications</h2><p>Review and approve student candidacy requests.</p></div>
+                <div class="dashboard-grid" style="grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;"><div class="card" style="padding: 15px; text-align: center;"><h4 style="color: #666; font-size: 14px;">Pending</h4><h2 id="countPending" style="color: var(--primary-blue); font-size: 24px;">0</h2></div><div class="card" style="padding: 15px; text-align: center;"><h4 style="color: #666; font-size: 14px;">Approved</h4><h2 id="countApproved" style="color: green; font-size: 24px;">0</h2></div><div class="card" style="padding: 15px; text-align: center;"><h4 style="color: #666; font-size: 14px;">Total</h4><h2 id="countTotal" style="color: #333; font-size: 24px;">0</h2></div></div>
+                <div style="text-align: right; margin-bottom: 15px;"><button id="btnAddDummyCandidate" class="btn-vote-now" style="background: #27ae60; color: white; border: none; padding: 10px 20px;"><i class="fa-solid fa-user-plus"></i> Add Dummy Candidate</button></div>
+                <div class="card full-width-card"><div class="table-responsive"><table class="data-table" style="width: 100%; border-collapse: collapse;"><thead><tr style="background: #f8f9fa; border-bottom: 2px solid #eee; text-align: left;"><th style="padding: 12px;">Applicant</th><th style="padding: 12px;">Position</th><th style="padding: 12px;">Target Org</th><th style="padding: 12px;">Partylist</th><th style="padding: 12px;">Status</th><th style="padding: 12px; text-align: right;">Actions</th></tr></thead><tbody id="applicationsTableBody"><tr><td colspan="6" style="text-align:center; padding: 20px;">Loading...</td></tr></tbody></table></div></div>
+                
+                <div class="section-title-box" style="margin-top: 40px;"><h2>Official Candidates Roster</h2><p>Manage all approved candidates currently on the ballot (including Dummies).</p></div>
+                <div class="card full-width-card"><div class="table-responsive"><table class="data-table" style="width: 100%; border-collapse: collapse;"><thead><tr style="background: #f8f9fa; border-bottom: 2px solid #eee; text-align: left;"><th style="padding: 12px;">Photo</th><th style="padding: 12px;">Candidate Name</th><th style="padding: 12px;">Position</th><th style="padding: 12px;">Org & Partylist</th><th style="padding: 12px;">Type</th><th style="padding: 12px; text-align: right;">Actions</th></tr></thead><tbody id="candidatesTableBody"><tr><td colspan="6" style="text-align:center; padding: 20px;">Loading candidates...</td></tr></tbody></table></div></div>
+            </div>
+
+            <!-- VIEW: USERS -->
+            <div id="view-users" class="content-view hidden">
+                <div class="section-title-box"><h2>User Management</h2><p>View and manage registered voters and administrators.</p></div>
+                <div class="card full-width-card">
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                        <input type="text" id="userSearchInput" placeholder="Search users by name or ID..." style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                        <!-- NEW: Re-purposed the hidden button to specifically Add Admins -->
+                        <button id="btnAddAdmin" class="btn-vote-now" style="padding: 10px 20px; border: none; background: #222; color: white;"><i class="fa-solid fa-user-shield"></i> + Add Admin</button>
+                    </div>
+                    <div class="table-responsive"><table class="data-table" style="width: 100%; border-collapse: collapse;"><thead><tr style="background: #f8f9fa; border-bottom: 2px solid #eee; text-align: left;"><th style="padding: 12px;">Name</th><th style="padding: 12px;">Student ID</th><th style="padding: 12px;">Strand & Grade</th><th style="padding: 12px;">Role</th><th style="padding: 12px; text-align: right;">Actions</th></tr></thead><tbody id="usersTableBody"><tr><td colspan="5" style="text-align:center; padding: 20px;">Loading users...</td></tr></tbody></table></div>
+                </div>
+            </div>
+
+            <div id="view-orgs" class="content-view hidden">
+                <div class="section-title-box"><h2>Manage Organizations</h2><p>Create official student councils and clubs that hold elections.</p></div>
+                <div class="card full-width-card">
+                    <form id="createOrgForm" style="background:#f8fafc; padding:20px; border-radius:10px; margin-bottom:20px; border:1px solid #e2e8f0;">
+                        <div style="display:flex; gap:10px; margin-bottom:15px; align-items: center;">
+                            <input type="text" id="newOrgName" placeholder="Organization Name (e.g. Supreme Student Council)" style="flex:2; padding:10px; border:1px solid #ddd; border-radius:8px;" required>
+                            <button type="submit" class="btn-vote-now" style="border:none;">+ Create Org</button>
+                        </div>
+                        <div class="input-group" style="margin-bottom:5px;">
+                            <label style="margin-bottom:5px; display:block; font-size:13px; color:#555;">Allowed Strands to Vote & Run:</label>
+                            <div id="newOrgStrands" class="strand-checkbox-group">
+                                <label><input type="checkbox" value="All" checked> All</label>
+                                <label><input type="checkbox" value="GAS"> GAS</label>
+                                <label><input type="checkbox" value="HUMSS"> HUMSS</label>
+                                <label><input type="checkbox" value="ABM"> ABM</label>
+                                <label><input type="checkbox" value="ICT - Programming"> ICT - Programming</label>
+                                <label><input type="checkbox" value="ICT - Animation"> ICT - Animation</label>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="adminOrgList"></div>
+                </div>
+            </div>
+
+            <div id="view-partylists" class="content-view hidden">
+                <div class="section-title-box"><h2>Manage Partylists</h2><p>Review student requests to form political factions, or manage existing ones.</p></div>
+                
+                <div class="card full-width-card" style="margin-bottom: 30px; border-left: 5px solid #f59e0b;">
+                    <h3 style="color:var(--dark-blue); margin-bottom:15px;"><i class="fa-solid fa-clock-rotate-left" style="color:#f59e0b;"></i> Pending Requests</h3>
+                    <div class="table-responsive">
+                        <table class="data-table" style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #fffbeb; border-bottom: 2px solid #fde68a; text-align: left; color:#92400e;">
+                                    <th style="padding: 12px;">Partylist Name</th>
+                                    <th style="padding: 12px;">Submitted By</th>
+                                    <th style="padding: 12px;">Date</th>
+                                    <th style="padding: 12px; text-align: right;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pendingPartylistsTableBody"><tr><td colspan="4" style="text-align:center; padding: 20px; color:#888;">Loading requests...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card full-width-card">
+                    <h3 style="color:var(--dark-blue); margin-bottom:15px;"><i class="fa-solid fa-users-line" style="color:var(--primary-blue);"></i> Official Partylists</h3>
+                    <div class="table-responsive">
+                        <table class="data-table" style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #f8f9fa; border-bottom: 2px solid #eee; text-align: left;">
+                                    <th style="padding: 12px;">Partylist Name</th>
+                                    <th style="padding: 12px;">Allowed Strands</th>
+                                    <th style="padding: 12px; text-align: right;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="officialPartylistsTableBody"><tr><td colspan="3" style="text-align:center; padding: 20px;">Loading partylists...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-positions" class="content-view hidden">
+                <div class="section-title-box"><h2>Manage Positions</h2><p>Define the hierarchy of positions for the ballot.</p></div>
+                <div class="card" style="max-width:800px; margin:0 auto;">
+                    <form id="addPositionForm" style="display:flex; gap:10px; margin-bottom:20px;">
+                        <input type="text" id="newPosTitle" placeholder="Position Title (e.g. Senator)" style="flex:1; padding:10px; border:1px solid #ddd; border-radius:8px;" required>
+                        <input type="number" id="newPosOrder" placeholder="Order" style="width:80px; padding:10px; border:1px solid #ddd; border-radius:8px;" required>
+                        <input type="number" id="newPosLimit" placeholder="Max" value="1" style="width:80px; padding:10px; border:1px solid #ddd; border-radius:8px;" required>
+                        <button type="submit" class="btn-vote-now" style="border:none;">+ Add</button>
+                    </form>
+                    <div class="table-responsive"><table class="data-table" style="width: 100%; border-collapse: collapse;"><thead><tr style="background: #f8f9fa; border-bottom: 2px solid #eee; text-align: left;"><th style="padding: 10px;">Order</th><th style="padding: 10px;">Position Title</th><th style="padding: 10px;">Max Winners</th><th style="padding: 10px; text-align: right;">Action</th></tr></thead><tbody id="positionsTableBody"><tr><td colspan="4" style="text-align:center; padding:15px;">Loading positions...</td></tr></tbody></table></div>
+                </div>
+            </div>
+
+            <div id="view-reports" class="content-view hidden">
+                <div class="section-title-box"><h2>Reports & Audit</h2></div>
+                <div class="dashboard-grid"><div class="card" style="grid-column: 1 / -1; display:flex; justify-content:space-between; align-items:center;"><h3>Official Results</h3><button id="btnPrintReport" class="btn-vote-now" style="background: var(--dark-blue); color:white; border:none;">Print Report</button></div></div>
+            </div>
+
+            <div id="view-settings" class="content-view hidden">
+                <div class="section-title-box"><h2>Election Controls</h2></div>
+                <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="card"><h3>Phases</h3><div style="display: flex; justify-content: space-between; align-items: center;"><p>Candidacy Registration</p><label class="switch"><input type="checkbox" id="toggleRegistration"><span class="slider"></span></label></div><div id="controlStatusMsg" style="margin-top: 15px;">Loading...</div></div>
+                    <div class="card"><h3>Timeline Activities</h3><form id="addEventForm" style="margin-bottom: 20px; display:flex; gap:10px;"><input type="text" id="eventTitle" placeholder="Title" class="profile-input" required style="margin-bottom:5px; width:100%;"><div style="display:flex; gap:10px;"><input type="text" id="eventDate" placeholder="Date" class="profile-input" required><select id="eventStatus" class="profile-input" required><option value="active">Active</option><option value="pending">Pending</option></select></div><button type="submit" class="btn-vote-now" style="width:100%; margin-top:5px;">+ Add</button></form><div id="adminTimelineList" style="max-height: 250px; overflow-y: auto;"></div></div>
+                    <div class="card" style="grid-column: 1 / -1;"><h3>Organization Voting Status</h3><p style="color:#666; font-size:13px; margin-bottom:15px;">Control which organizations are currently open for voting.</p><div class="table-responsive"><table class="data-table" style="width: 100%; border-collapse: collapse;"><thead><tr style="background: #f8f9fa; border-bottom: 2px solid #eee; text-align: left;"><th style="padding: 12px;">Organization</th><th style="padding: 12px;">Current Status</th><th style="padding: 12px; text-align: right;">Action</th></tr></thead><tbody id="orgStatusTableBody"><tr><td colspan="3" style="text-align:center; padding:15px;">Loading...</td></tr></tbody></table></div></div>
+                    <div class="card" style="grid-column: 1 / -1; border: 1px solid #e57373; background: #fff5f5;"><h3 style="color: #c62828;">⚠️ Danger Zone</h3><p style="color: #c62828; font-size: 13px; margin-bottom: 15px;">Permanently delete all election data.</p><button id="btnResetElection" class="btn-vote-now" style="background: #d32f2f; color: white; border: none; margin-top:10px;">Reset Database</button></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ADMIN MODALS -->
+    <div id="logoutModal" class="modal-overlay hidden"><div class="modal-container" style="height: auto; max-width: 400px; padding: 30px; text-align: center;"><h2>Confirm Logout</h2><div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;"><button id="cancelLogout" class="btn-small-outline" style="color: #555;">Cancel</button><button id="confirmLogout" class="btn-vote-now" style="background: #d32f2f; color: white; border: none;">Logout</button></div></div></div>
+    
+    <!-- NEW: ADD ADMIN MODAL -->
+    <div id="addAdminModal" class="modal-overlay hidden">
+        <div class="modal-container" style="height: auto; max-width: 500px; padding: 25px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom: 20px;">
+                <h2>Create Admin Account</h2>
+                <button id="closeAddAdminModal" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
+            </div>
+            <form id="addAdminForm">
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <div style="flex:1;"><label>First Name</label><input type="text" id="admin_fname" class="profile-input" required></div>
+                    <div style="flex:1;"><label>Last Name</label><input type="text" id="admin_lname" class="profile-input" required></div>
+                </div>
+                <div class="input-group" style="margin-bottom:15px;">
+                    <label>Email Address</label>
+                    <input type="email" id="admin_email" class="profile-input" required>
+                </div>
+                <div class="input-group" style="margin-bottom:15px;">
+                    <label>Temporary Password</label>
+                    <input type="password" id="admin_password" class="profile-input" placeholder="Min 6 characters" required minlength="6">
+                </div>
+                <div style="background:#fff3cd; border:1px solid #ffeeba; padding:10px; border-radius:8px; margin-bottom:20px;">
+                    <p style="font-size:12px; color:#856404; margin:0;"><i class="fa-solid fa-triangle-exclamation"></i> <strong>Security Note:</strong> Because you are registering a new secure user, Firebase will automatically log out your current session. You will need to log back in after creating this account.</p>
+                </div>
+                <button type="submit" class="btn-vote-now" style="border:none; width: 100%; background: #222;">Create Admin Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Existing Modals Below (Dummy, Edit, Org, Partylist) -->
+    <div id="dummyCandidateModal" class="modal-overlay hidden">
+        <div class="modal-container" style="height: auto; max-width: 500px; padding: 20px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom: 20px;"><h2>Add Dummy Candidate</h2><button id="closeDummyModal" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button></div>
+            <form id="dummyCandidateForm">
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <div style="flex:1;"><label>First Name</label><input type="text" id="dummy_fname" class="profile-input" required></div>
+                    <div style="flex:1;"><label>Last Name</label><input type="text" id="dummy_lname" class="profile-input" required></div>
+                </div>
+                <div class="input-group" style="margin-bottom:15px;"><label>Position</label><select id="dummy_position" class="profile-input" required><option value="President">President</option></select></div>
+                <div class="input-group" style="margin-bottom:15px;"><label>Organization</label><select id="dummy_org" class="profile-input" required><option value="" disabled selected>Loading Orgs...</option></select></div>
+                <div class="input-group" style="margin-bottom:15px;"><label>Campaign Platform</label><textarea id="dummy_platform" class="profile-input" rows="3" placeholder="Enter their platform/goals..." required></textarea></div>
+                <div class="input-group" style="margin-bottom:15px;"><label>Achievements & Awards (Optional)</label><textarea id="dummy_achievements" class="profile-input" rows="2" placeholder="List awards or achievements..."></textarea></div>
+                <div class="input-group" style="margin-bottom:15px;"><label>Profile Picture</label><input type="file" id="dummy_photo" class="profile-input" accept="image/*"></div>
+                <button type="submit" class="btn-vote-now" style="border:none; width: 100%; background: #27ae60;">Create Candidate</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="editCandidateModal" class="modal-overlay hidden">
+        <div class="modal-container" style="height: auto; max-width: 500px; padding: 20px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom: 20px;"><h2>Edit Candidate</h2><button id="closeEditCandidateModal" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button></div>
+            <form id="editCandidateForm">
+                <input type="hidden" id="edit_cand_id">
+                <div class="input-group" style="margin-bottom: 15px;"><label>Full Name</label><input type="text" id="edit_cand_name" class="profile-input" required></div>
+                <div class="input-group" style="margin-bottom:15px;"><label>Position</label><select id="edit_cand_position" class="profile-input" required><option value="President">President</option></select></div>
+                <div class="input-group" style="margin-bottom:15px;"><label>Organization</label><select id="edit_cand_org" class="profile-input" required><option value="" disabled selected>Loading Orgs...</option></select></div>
+                <div class="input-group" style="margin-bottom: 15px;"><label>Platform / Goals</label><textarea id="edit_cand_platform" class="profile-input" rows="4" required></textarea></div>
+                <div class="input-group" style="margin-bottom: 15px;"><label>Achievements & Awards (Optional)</label><textarea id="edit_cand_achievements" class="profile-input" rows="3"></textarea></div>
+                <div class="input-group" style="margin-bottom:15px;"><label>Update Profile Picture (Optional)</label><input type="file" id="edit_cand_photo" class="profile-input" accept="image/*"></div>
+                <button type="submit" class="btn-vote-now" style="border:none; width: 100%; background: var(--primary-blue);">Save Changes</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="editOrgModal" class="modal-overlay hidden"><div class="modal-container" style="height: auto; max-width: 600px; flex-direction: column; padding: 30px;"><div style="display:flex; justify-content:space-between; margin-bottom: 20px;"><h2>Edit Organization</h2><button id="closeEditOrgModal" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button></div><form id="editOrgForm"><input type="hidden" id="edit_org_id"><div class="input-group" style="margin-bottom: 15px;"><label>Organization Name</label><input type="text" id="edit_org_name" class="profile-input" required></div><div class="input-group" style="margin-bottom: 15px;"><label style="margin-bottom:5px; display:block;">Allowed Strands</label><div id="editOrgStrands" class="strand-checkbox-group"><label><input type="checkbox" value="All"> All</label><label><input type="checkbox" value="GAS"> GAS</label><label><input type="checkbox" value="HUMSS"> HUMSS</label><label><input type="checkbox" value="ABM"> ABM</label><label><input type="checkbox" value="ICT - Programming"> ICT - Prog</label><label><input type="checkbox" value="ICT - Animation"> ICT - Anim</label></div></div><div class="input-group" style="margin-bottom: 15px;"><label>Mission</label><textarea id="edit_org_mission" rows="3" class="profile-input" required></textarea></div><div class="input-group" style="margin-bottom: 15px;"><label>Vision</label><textarea id="edit_org_vision" rows="3" class="profile-input" required></textarea></div><div class="input-group" style="margin-bottom: 15px;"><label>Update Banner Image</label><input type="file" id="edit_org_banner" class="profile-input" accept="image/*"></div><div style="text-align: right; margin-top: 10px;"><button type="submit" class="btn-vote-now" style="border: none;">Save Changes</button></div></form></div></div>
+    
+    <div id="reviewPartylistModal" class="modal-overlay hidden">
+        <div class="modal-container" style="height: auto; max-width: 600px; padding: 30px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom: 20px;">
+                <h2>Review Partylist Request</h2>
+                <button id="closeReviewModal" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
+            </div>
+            <div id="reviewPartylistContent" style="background:#f8fafc; padding:20px; border-radius:8px; margin-bottom:20px;"></div>
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button id="btnDeclinePartylist" class="btn-small-outline" style="color:#d32f2f; border-color:#d32f2f;">Decline</button>
+                <button id="btnApprovePartylist" class="btn-vote-now" style="background:#10b981; border:none;">Approve as Official Party</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/admin.js"></script>
+</body>
+</html>

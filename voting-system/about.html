@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Informatics Online Voting</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .about-hero { background: linear-gradient(135deg, var(--dark-blue) 0%, var(--primary-blue) 100%); color: white; padding: 80px 20px; text-align: center; margin-top: 70px; }
+        .about-hero h1 { font-size: 40px; margin-bottom: 15px; }
+        .about-hero p { font-size: 18px; max-width: 600px; margin: 0 auto; opacity: 0.9; line-height: 1.6; }
+        .about-content { max-width: 1000px; margin: 60px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+        .about-text h2 { color: var(--dark-blue); font-size: 32px; margin-bottom: 20px; }
+        .about-text p { color: #555; line-height: 1.8; margin-bottom: 15px; font-size: 16px; }
+        .core-values { background: #f8fafc; padding: 60px 20px; text-align: center; }
+        .core-values h2 { color: var(--dark-blue); margin-bottom: 40px; font-size: 32px; }
+        .values-grid { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+        .value-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .value-card i { font-size: 40px; color: var(--primary-blue); margin-bottom: 20px; }
+        .value-card h3 { color: var(--dark-blue); margin-bottom: 15px; }
+        .value-card p { color: #666; line-height: 1.6; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <nav>
+            <div class="logo-container">
+                <img src="1998832.webp" alt="Informatics Logo" class="school-logo">
+                <span class="logo-text">Informatics College, Northgate.</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html" class="active">About</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <a href="index.html" style="text-decoration:none;"><button class="btn-login">Go to Login</button></a>
+            </div>
+        </nav>
+    </header>
+
+    <section class="about-hero">
+        <h1>Empowering Student Voices</h1>
+        <p>A secure, transparent, and modern approach to student council elections at Informatics College Northgate.</p>
+    </section>
+
+    <section class="about-content">
+        <div class="about-text">
+            <h2>Our Mission</h2>
+            <p>The Informatics Online Voting System was developed to modernize the traditional form-based election process. Our goal is to provide a platform that ensures absolute transparency, accessibility, and security for every student casting their ballot.</p>
+            <p>By digitizing the student council elections, we eliminate manual counting errors, reduce paper waste, and allow students from all strands (GAS, HUMSS, ABM, ICT) to participate effortlessly from any device.</p>
+        </div>
+        <div>
+            <img src="https://img.freepik.com/free-vector/team-goals-concept-illustration_114360-5147.jpg" alt="Mission Illustration" style="width: 100%; border-radius: 12px;">
+        </div>
+    </section>
+
+    <section class="core-values">
+        <h2>System Core Values</h2>
+        <div class="values-grid">
+            <div class="value-card">
+                <i class="fa-solid fa-shield-halved"></i>
+                <h3>Integrity & Security</h3>
+                <p>Built with robust database security and One-Vote policies to ensure every election is fair and tamper-proof.</p>
+            </div>
+            <div class="value-card">
+                <i class="fa-solid fa-eye"></i>
+                <h3>Transparency</h3>
+                <p>Live, real-time analytics allow both administrators and students to monitor election progress with complete clarity.</p>
+            </div>
+            <div class="value-card">
+                <i class="fa-solid fa-bolt"></i>
+                <h3>Efficiency</h3>
+                <p>From filing candidacy to casting a ballot, the entire process takes minutes, completely eliminating manual tallying.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content" style="max-width: 1000px; margin: 0 auto; padding: 20px; text-align: center;">
+            <p class="copyright" style="color: #666; font-size: 14px;">© Copyright 2023 Informatics College Inc. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

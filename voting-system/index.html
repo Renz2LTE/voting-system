@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informatics College - Voting System</title>
+    
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- hCaptcha SCRIPT -->
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+
+    <style>
+        .btn-role-select {
+            display: flex; align-items: center; justify-content: center; gap: 15px; width: 100%;
+            padding: 15px; margin-bottom: 15px; border: 2px solid #e0e0e0; border-radius: 12px;
+            background: white; cursor: pointer; transition: all 0.3s ease; text-align: left;
+        }
+        .btn-role-select:hover {
+            border-color: var(--primary-blue); background: #f0f7ff; transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .btn-role-select i { font-size: 24px; color: var(--primary-blue); }
+        .btn-role-select span { font-size: 16px; font-weight: 600; color: #444; }
+        .btn-back {
+            background: none; border: none; color: #666; cursor: pointer; margin-bottom: 20px;
+            font-size: 14px; display: flex; align-items: center; gap: 5px;
+        }
+        .btn-back:hover { color: var(--primary-blue); }
+    </style>
+</head>
+
+<body>
+
+    <header class="main-header">
+        <nav>
+            <div class="logo-container">
+                <img src="1998832.webp" alt="Informatics Logo" class="school-logo">
+                <span class="logo-text">Informatics College, Northgate.</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <button class="btn-login">Log in</button>
+                <button class="btn-register">Register</button>
+            </div>
+        </nav>
+    </header>
+
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title"><span>Informatics</span>Online Voting System</h1>
+            <p class="hero-subtitle">
+                The official, secure voting portal for Informatics Northgate College. 
+            </p>
+            <button class="btn-hero">Register as a Voter</button>
+        </div>
+        <div class="hero-image">
+            <img src="https://img.freepik.com/free-vector/online-voting-concept-illustration_114360-6208.jpg" alt="Voting Illustration">
+        </div>
+    </section>
+
+    <section class="steps-bar">
+        <div class="step-item">
+            <span class="step-label">Step 1:</span><h3>SIGN UP</h3><p>Create your verified student account.</p>
+        </div>
+        <div class="step-item">
+            <span class="step-label">Step 2:</span><h3>VOTE</h3><p>Select your preferred candidates securely.</p>
+        </div>
+        <div class="step-item">
+            <span class="step-label">Step 3:</span><h3>VIEW RESULTS</h3><p>View real-time transparency reports.</p>
+        </div>
+    </section>
+
+    <section class="features-section">
+        <h2 class="section-title">System Features</h2>
+        <div class="features-grid">
+            <div class="feature-card"><div class="icon-circle"><i class="fa-solid fa-lock"></i></div><h3>Secured Platform</h3></div>
+            <div class="feature-card"><div class="icon-circle"><i class="fa-solid fa-mobile-screen-button"></i></div><h3>Vote Online</h3></div>
+            <div class="feature-card"><div class="icon-circle"><i class="fa-solid fa-users-viewfinder"></i></div><h3>Real Time Results</h3></div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-left">
+                <div class="logo-container footer-logo">
+                    <img src="1998832.webp" alt="Logo" class="school-logo-small">
+                    <span class="logo-text">Informatics College Inc.</span>
+                </div>
+                <p class="copyright">© Copyright 2026 Informatics College Inc.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AUTH MODAL -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-container">
+            <button class="close-modal-btn" id="closeModal">&times;</button>
+            <div class="modal-left">
+                <div class="modal-welcome-text"><h2>Welcome!</h2><p>...</p></div>
+            </div>
+            <div class="modal-right">
+                
+                <!-- PORTAL SELECTION -->
+                <div class="form-box selection-box" id="roleSelectionBox">
+                    <h2 style="margin-bottom: 20px; color: var(--dark-blue);">Select Portal</h2>
+                    <button class="btn-role-select" id="btnSelectStudent">
+                        <div style="background: #eef2ff; padding: 10px; border-radius: 50%;"><i class="fa-solid fa-user-graduate"></i></div>
+                        <span>Student Login</span>
+                    </button>
+                    <button class="btn-role-select" id="btnSelectAdmin">
+                        <div style="background: #eef2ff; padding: 10px; border-radius: 50%;"><i class="fa-solid fa-user-shield"></i></div>
+                        <span>Administrator Login</span>
+                    </button>
+                    <p class="switch-text">Don't have an account? <a href="#" id="showRegisterFromSelect">Register here</a></p>
+                </div>
+
+                <!-- LOGIN FORM WITH hCAPTCHA -->
+                <div class="form-box login-box hidden" id="loginFormBox">
+                    <button class="btn-back" id="backToSelection"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                    <h2 id="loginTitle">Sign In</h2>
+                    
+                    <div class="input-group"><i class="fa-solid fa-envelope"></i><input type="email" id="login_email" placeholder="Email Address" required></div>
+                    <div class="input-group"><i class="fa-solid fa-lock"></i><input type="password" id="login_password" placeholder="Password" required></div>
+                    
+                    <!-- hCAPTCHA WIDGET -->
+                    <!-- REPLACE 'YOUR_HCAPTCHA_SITE_KEY' WITH YOUR ACTUAL KEY -->
+                    <div class="input-group" style="display:flex; justify-content:center;">
+                        <div class="h-captcha" data-sitekey="bec81762-2318-472e-b660-9624215e087c"></div>
+                    </div>
+
+                    <div id="signInMessage" class="message-div"></div>
+                    <button class="btn-submit" id="submitLogin">Log In</button>
+                    <p class="switch-text">Don't have an account? <a href="#" id="showRegister">Register here</a></p>
+                </div>
+
+                <!-- REGISTER FORM -->
+                <div class="form-box register-box hidden" id="registerFormBox">
+                    <h2>Create Account</h2>
+                    <div class="input-row">
+                        <div class="input-group"><i class="fa-solid fa-user"></i><input type="text" id="first_name" placeholder="First Name" required></div>
+                        <div class="input-group"><i class="fa-solid fa-user"></i><input type="text" id="last_name" placeholder="Last Name" required></div>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group"><i class="fa-solid fa-id-card"></i><input type="text" id="student_id" placeholder="Student ID" required></div>
+                        <div class="input-group"><input type="date" id="birthday" required style="padding-left: 15px; color: #555;"></div>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group"><i class="fa-solid fa-graduation-cap"></i><select id="year_level" required><option value="" disabled selected>Year Level</option><option value="Grade 11">Grade 11</option><option value="Grade 12">Grade 12</option></select></div>
+                        <div class="input-group"><i class="fa-solid fa-book-open"></i><select id="strand" required><option value="" disabled selected>Strand</option><option value="GAS">GAS</option><option value="HUMSS">HUMSS</option><option value="ABM">ABM</option><option value="ICT - Programming">ICT - Programming</option><option value="ICT - Animation">ICT - Animation</option></select></div>
+                    </div>
+                    <div class="input-group"><i class="fa-solid fa-location-dot"></i><input type="text" id="address" placeholder="Address" required></div>
+                    <div class="input-row">
+                        <div class="input-group phone-group"><span class="ph-prefix">+63</span><input type="tel" id="phone_number" placeholder="912 345 6789" required></div>
+                        <div class="input-group"><i class="fa-solid fa-envelope"></i><input type="email" id="signup_email" placeholder="Email" required></div>
+                    </div>
+                    <div class="input-group"><i class="fa-solid fa-lock"></i><input type="password" id="signup_password" placeholder="Password (Min. 6 chars)" required></div>
+                    <div id="signUpMessage" class="message-div"></div>
+                    <button class="btn-submit" id="submitSignUp">Register</button>
+                    <p class="switch-text">Already have an account? <a href="#" id="showLogin">Log in here</a></p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/index.js"></script>
+</body>
+</html>
